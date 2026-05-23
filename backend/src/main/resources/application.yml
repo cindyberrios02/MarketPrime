@@ -8,9 +8,9 @@ spring:
         default-page-size: 20
         max-page-size: 100
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:sqlserver://localhost:1433;databaseName=marketprime;trustServerCertificate=true;}
-    username: ${SPRING_DATASOURCE_USERNAME:sa}
-    password: ${SPRING_DATASOURCE_PASSWORD:marketprime123}
+    url: ${SPRING_DATASOURCE_URL:jdbc:sqlserver://marketprime.database.windows.net:1433;databaseName=marketprimebd;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;}
+    username: ${SPRING_DATASOURCE_USERNAME:marketprime}
+    password: ${SPRING_DATASOURCE_PASSWORD:PrimeMarket123!}
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 
 
