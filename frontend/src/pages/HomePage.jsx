@@ -217,19 +217,86 @@ const HomePage = () => {
         }
         .hero-grid {
           display: grid;
-          grid-template-columns: 1.2fr 0.8fr;
+          grid-template-columns: 1fr;
           gap: 48px;
           align-items: center;
-          text-align: left;
+          text-align: center;
+          margin: 0 auto;
+          max-width: 900px;
+          padding: 0 40px; /* Evita que el texto choque con las flechas */
         }
-        @media (max-width: 868px) {
+        @media (min-width: 1024px) {
+          .hero-grid {
+            grid-template-columns: 1.2fr 0.8fr;
+            text-align: left;
+            padding: 0 50px;
+          }
+        }
+        @media (max-width: 768px) {
           .hero-grid {
             grid-template-columns: 1fr;
             text-align: center;
             gap: 30px;
+            padding: 0 20px;
           }
           .hero-visual {
             display: none;
+          }
+        }
+        .hero-section-bg {
+          padding: 80px 48px 96px 48px;
+        }
+        .hero-text-block {
+          display: flex;
+          flex-direction: column;
+          gap: 18px;
+          align-items: flex-start;
+          justify-content: flex-start;
+        }
+        .hero-cta-wrapper {
+          justify-content: flex-start;
+        }
+        .hero-title {
+          font-family: var(--font-sans);
+          font-size: 48px;
+          font-weight: 900;
+          line-height: 1.15;
+          letter-spacing: -1.8px;
+          margin: 0;
+          text-shadow: 0 4px 16px rgba(0,0,0,0.5);
+        }
+        .hero-desc {
+          font-size: 17px;
+          color: #eaeae8;
+          font-weight: 400;
+          line-height: 1.65;
+          margin: 0 0 16px 0;
+          max-width: 580px;
+          text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+        @media (max-width: 1024px) {
+          .hero-text-block {
+            align-items: center;
+          }
+          .hero-cta-wrapper {
+            justify-content: center;
+          }
+        }
+        @media (max-width: 768px) {
+          .hero-section-bg {
+            padding: 60px 20px 80px 20px;
+          }
+          .hero-title {
+            font-size: 32px;
+            letter-spacing: -1px;
+          }
+          .hero-desc {
+            font-size: 15px;
+          }
+        }
+        @media (max-width: 400px) {
+          .hero-title {
+            font-size: 28px;
           }
         }
         .glass-visual-card {
@@ -268,12 +335,11 @@ const HomePage = () => {
         }
       `}</style>
 
-      <section className="hero-bg-transition" style={{
+      <section className="hero-bg-transition hero-section-bg" style={{
         backgroundImage: `linear-gradient(to right, rgba(0, 0, 0, 0.95) 30%, rgba(0, 0, 0, 0.75) 60%, rgba(0, 0, 0, 0.45) 100%), ${SLIDES[activeSlide].backgroundImage}`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         color: 'var(--text-white)',
-        padding: '80px 48px 96px 48px',
         borderRadius: 'var(--radius-lg)',
         marginTop: '20px',
         position: 'relative',
@@ -311,7 +377,7 @@ const HomePage = () => {
 
         <div className="hero-grid" style={{ position: 'relative', zIndex: 2 }}>
           {/* Left Column: Text & CTA */}
-          <div key={activeSlide} className="hero-slide-enter" style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+          <div key={activeSlide} className="hero-slide-enter hero-text-block">
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{
                 backgroundColor: 'rgba(197, 160, 89, 0.15)',
@@ -339,31 +405,15 @@ const HomePage = () => {
               {SLIDES[activeSlide].subtitle}
             </span>
 
-            <h1 style={{
-              fontFamily: 'var(--font-sans)',
-              fontSize: '48px',
-              fontWeight: 900,
-              lineHeight: '1.15',
-              letterSpacing: '-1.8px',
-              margin: 0,
-              textShadow: '0 4px 16px rgba(0,0,0,0.5)'
-            }}>
+            <h1 className="hero-title">
               {SLIDES[activeSlide].title}
             </h1>
 
-            <p style={{
-              fontSize: '17px',
-              color: '#eaeae8',
-              fontWeight: '400',
-              lineHeight: '1.65',
-              margin: '0 0 16px 0',
-              maxWidth: '580px',
-              textShadow: '0 2px 8px rgba(0,0,0,0.4)'
-            }}>
+            <p className="hero-desc">
               {SLIDES[activeSlide].description}
             </p>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'center', marginBottom: '8px' }}>
+            <div className="hero-cta-wrapper" style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'center', marginBottom: '8px', width: '100%' }}>
               <Link to={SLIDES[activeSlide].ctaLink} className="btn btn-gold" style={{ padding: '14px 28px', fontSize: '14px', fontWeight: '800', display: 'inline-flex', alignItems: 'center', gap: '6px', borderRadius: '10px', boxShadow: '0 4px 15px rgba(197, 160, 89, 0.3)' }}>
                 {SLIDES[activeSlide].ctaText} <ChevronRight size={16} />
               </Link>
