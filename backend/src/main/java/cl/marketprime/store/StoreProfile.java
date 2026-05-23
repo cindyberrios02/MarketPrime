@@ -39,7 +39,7 @@ public class StoreProfile {
     @Column(nullable = false, unique = true, length = 120)
     private String slug;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(length = 2000)
     private String description;
 
     @Column(name = "logo_url", length = 500)

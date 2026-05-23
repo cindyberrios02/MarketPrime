@@ -48,7 +48,7 @@ public class Product {
     @Column(nullable = false, unique = true, length = 220)
     private String slug;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(length = 2000)
     private String description;
 
     // Precio base siempre requerido
