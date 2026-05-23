@@ -1,7 +1,7 @@
 // services/api.js
 import axios from 'axios';
 
-const API_BASE_URL = 'https://marketprime-api-c4e6h4ath5dzhcat.westus3-01.azurewebsites.net/api';
+const API_BASE_URL = 'https://marketprime-api-c4e6h4ath5dzhcat.westus3-01.azurewebsites.net';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
