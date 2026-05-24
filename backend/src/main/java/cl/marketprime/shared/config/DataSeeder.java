@@ -360,7 +360,7 @@ public class DataSeeder implements ApplicationRunner {
         for (int i = 0; i < products.size(); i++) {
             Product p = products.get(i);
             // Skip products that already have reviews to avoid duplicates on reboot
-            if (!reviewRepository.findByProductId(p.getId()).isEmpty()) continue;
+            if (reviewRepository.countByProductId(p.getId()) > 0) continue;
 
             int numReviews = 2 + (int)(Math.random() * 4); // 2 to 5 reviews
             for (int r = 0; r < numReviews; r++) {
