@@ -14,7 +14,7 @@ const ImageSlider = ({ images, fallbackText = "Sin Imagen", height = "100%" }) =
     
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev === safeImages.length - 1 ? 0 : prev + 1));
-    }, 3000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [safeImages.length, isHovered]);
@@ -33,21 +33,34 @@ const ImageSlider = ({ images, fallbackText = "Sin Imagen", height = "100%" }) =
 
   return (
     <div 
-      style={{ width: '100%', height: height, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      style={{ width: '100%', height: height, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <img
-        src={safeImages[currentIndex]}
-        alt="Product"
+      <div 
         style={{
-          maxWidth: "100%",
-          maxHeight: "100%",
-          objectFit: "contain",
-          transition: "opacity 0.3s ease"
+          display: 'flex',
+          width: '100%',
+          height: '100%',
+          transition: 'transform 0.5s ease-in-out',
+          transform: `translateX(-${currentIndex * 100}%)`
         }}
-        onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Imagen'; }}
-      />
+      >
+        {safeImages.map((img, idx) => (
+          <div key={idx} style={{ minWidth: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <img
+              src={img}
+              alt={`Product ${idx + 1}`}
+              style={{
+                maxWidth: "100%",
+                maxHeight: "100%",
+                objectFit: "contain",
+              }}
+              onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Imagen'; }}
+            />
+          </div>
+        ))}
+      </div>
       
       {safeImages.length > 1 && isHovered && (
         <>
