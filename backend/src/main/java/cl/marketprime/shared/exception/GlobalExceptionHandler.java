@@ -50,7 +50,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleGeneric(Exception ex) {
         log.error("Unhandled exception: {}", ex.getMessage(), ex);
-        var problem = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred");
+        // Exponer el mensaje de error real para facilitar el debugging en Azure
+        var problem = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, 
+            "Server Error: " + ex.getClass().getSimpleName() + " - " + ex.getMessage());
         problem.setType(URI.create("/errors/internal"));
         return problem;
     }
