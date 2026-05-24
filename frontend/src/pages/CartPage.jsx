@@ -55,7 +55,7 @@ const CartPage = () => {
   }
 
   return (
-    <div className="fade-in container" style={{ padding: '32px 0 64px 0' }}>
+    <div className="fade-in container" style={{ paddingTop: '32px', paddingBottom: '64px' }}>
       <h1 className="title-section" style={{ fontSize: '32px', marginBottom: '8px' }}>Carro de Compras</h1>
       <p className="subtitle-section" style={{ marginBottom: '32px' }}>
         Gestiona tus productos seleccionados antes de finalizar el pedido
@@ -102,16 +102,10 @@ const CartPage = () => {
             {cart.items.map((item) => (
               <div
                 key={item.productId}
-                className="card"
-                style={{
-                  display: 'flex',
-                  gap: '20px',
-                  padding: '20px',
-                  alignItems: 'center'
-                }}
+                className="card cart-item-row"
               >
                 {/* Product Image */}
-                <div style={{
+                <div className="cart-item-img" style={{
                   width: '80px',
                   height: '80px',
                   backgroundColor: 'var(--bg-secondary)',
@@ -130,7 +124,7 @@ const CartPage = () => {
                 </div>
 
                 {/* Info */}
-                <div style={{ flex: 1, textAlign: 'left' }}>
+                <div className="cart-item-info" style={{ textAlign: 'left' }}>
                   <Link to={`/product/${item.productSlug || item.slug}`} style={{ textDecoration: 'none' }}>
                     <h3 style={{
                       fontSize: '15px',
@@ -165,7 +159,7 @@ const CartPage = () => {
                 </div>
 
                 {/* Controles de cantidad */}
-                <div style={{ display: 'flex', alignItems: 'center', border: '1px solid var(--border-medium)', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--bg-secondary)' }}>
+                <div className="cart-item-controls" style={{ display: 'flex', alignItems: 'center', border: '1px solid var(--border-medium)', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--bg-secondary)', width: 'fit-content' }}>
                   <button
                     onClick={() => handleQuantityChange(item.productId, item.quantity, 99, -1)}
                     style={{ background: 'none', border: 'none', padding: '6px 10px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
@@ -187,7 +181,7 @@ const CartPage = () => {
                 </div>
 
                 {/* Subtotal */}
-                <div style={{ width: '110px', textAlign: 'right' }}>
+                <div className="cart-item-subtotal" style={{ width: '110px', textAlign: 'right' }}>
                   <span style={{ fontSize: '16px', fontWeight: '800', color: 'var(--color-black)' }}>
                     {formatCLP(item.subtotal)}
                   </span>
@@ -195,6 +189,7 @@ const CartPage = () => {
 
                 {/* Eliminar unitario */}
                 <button
+                  className="cart-item-delete"
                   onClick={() => removeItem(item.productId)}
                   style={{
                     background: 'none',
@@ -310,11 +305,31 @@ const CartPage = () => {
           gap: 32px;
           align-items: start;
         }
+        .cart-item-row {
+          display: grid;
+          grid-template-columns: 80px 1fr auto 110px auto;
+          gap: 20px;
+          padding: 20px;
+          align-items: center;
+        }
         @media (max-width: 868px) {
           .cart-layout {
             grid-template-columns: 1fr;
             gap: 24px;
           }
+          .cart-item-row {
+            grid-template-columns: 80px 1fr auto;
+            grid-template-areas:
+              "img info delete"
+              "img controls subtotal";
+            gap: 12px;
+            padding: 16px;
+          }
+          .cart-item-img { grid-area: img; }
+          .cart-item-info { grid-area: info; }
+          .cart-item-controls { grid-area: controls; }
+          .cart-item-subtotal { grid-area: subtotal; text-align: right; width: auto !important; }
+          .cart-item-delete { grid-area: delete; align-self: start; }
         }
       `}</style>
     </div>
