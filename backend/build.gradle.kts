@@ -36,6 +36,7 @@ dependencies {
 	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
 	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
 	implementation("com.github.transbankdevelopers:transbank-sdk-java:4.0.0")
+	implementation("com.azure:azure-storage-blob:12.25.1")
 }
 
 tasks.withType<Test> {

@@ -12,8 +12,6 @@ spring:
     username: ${SPRING_DATASOURCE_USERNAME:marketprime}
     password: ${SPRING_DATASOURCE_PASSWORD:PrimeMarket123!}
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -21,6 +19,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 server:
   port: 8080
@@ -33,3 +35,7 @@ app:
     access-token-expiration-ms: 3600000         # 15 minutos
     refresh-token-expiration-ms: 604800000  # 7 días
 
+azure:
+  storage:
+    connection-string: ${AZURE_STORAGE_CONNECTION_STRING:DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;}
+    container-name: ${AZURE_STORAGE_CONTAINER_NAME:marketprime-images}

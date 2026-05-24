@@ -8,6 +8,7 @@ import api from '../services/api';
 import useAuthStore from '../store/useAuthStore';
 import useToastStore from '../store/useToastStore';
 import { formatCLP } from '../services/utils';
+import { uploadImage } from '../services/imageService';
 
 const SellerDashboard = () => {
   const { user } = useAuthStore();
@@ -298,23 +299,18 @@ const SellerDashboard = () => {
         setIsUploading(true);
         setUploadProgress(0);
         
-        const formData = new FormData();
-        formData.append('file', selectedFile);
-        formData.append('primary', 'true');
-        if (productForm.name) {
-          formData.append('altText', productForm.name);
+        try {
+          // Subir la imagen comprimida hacia Azure Blob Storage a través de nuestro backend
+          const azureUrl = await uploadImage(selectedFile, setUploadProgress);
+          
+          // Enlazar la nueva URL al producto creado
+          await api.post(`/api/products/${savedProduct.id}/images?url=${encodeURIComponent(azureUrl)}&primary=true`);
+          
+          showToast('¡Imagen optimizada y subida con éxito!', 'success');
+        } catch (uploadErr) {
+          console.error('Error uploading product image:', uploadErr);
+          showToast('El producto se guardó, pero hubo un error subiendo la imagen.', 'warning');
         }
-
-        await api.post(`/api/products/${savedProduct.id}/images/upload`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          },
-          onUploadProgress: (progressEvent) => {
-            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-            setUploadProgress(percentCompleted);
-          }
-        });
-        showToast('¡Imagen física subida y enlazada con éxito!', 'success');
       } else if (productForm.imageUrl && productForm.imageUrl !== (editingProduct?.imageUrl || (editingProduct?.images && editingProduct.images.find(img => img.primary)?.imageUrl))) {
         // Enlazar imagen vía URL si ha cambiado o es nueva
         await api.post(`/api/products/${savedProduct.id}/images?url=${encodeURIComponent(productForm.imageUrl)}&primary=true`);
@@ -1058,9 +1054,40 @@ const SellerDashboard = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: 'rgba(255,255,255,0.4)',
-                  fontSize: '13px'
+                  fontSize: '13px',
+                  position: 'relative',
+                  cursor: 'pointer'
                 }}>
                   {!settingsForm.bannerUrl && 'Sin imagen de portada configurada'}
+                  {/* File input invisible encima del banner */}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={async (e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        try {
+                          showToast('Optimizando y subiendo banner...', 'info');
+                          const bannerUrl = await uploadImage(file);
+                          setSettingsForm({ ...settingsForm, bannerUrl });
+                          showToast('Banner listo. ¡Recuerda guardar los cambios!', 'success');
+                        } catch (err) {
+                          showToast('Error al subir el banner.', 'error');
+                        }
+                      }
+                    }}
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      opacity: 0,
+                      cursor: 'pointer',
+                      zIndex: 2
+                    }}
+                    title="Cambiar Banner"
+                  />
                 </div>
               </div>
               <div style={{ width: '140px' }}>
@@ -1074,7 +1101,9 @@ const SellerDashboard = () => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  overflow: 'hidden'
+                  overflow: 'hidden',
+                  position: 'relative',
+                  cursor: 'pointer'
                 }}>
                   {settingsForm.logoUrl ? (
                     <img 
@@ -1086,6 +1115,35 @@ const SellerDashboard = () => {
                   ) : (
                     <Store size={36} style={{ color: 'var(--text-tertiary)' }} />
                   )}
+                  {/* File input invisible encima del logo para permitir subida con un click */}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={async (e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        try {
+                          showToast('Optimizando y subiendo logo...', 'info');
+                          const logoUrl = await uploadImage(file);
+                          setSettingsForm({ ...settingsForm, logoUrl });
+                          showToast('Logo listo. ¡Recuerda guardar los cambios!', 'success');
+                        } catch (err) {
+                          showToast('Error al subir el logo.', 'error');
+                        }
+                      }
+                    }}
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      opacity: 0,
+                      cursor: 'pointer',
+                      zIndex: 2
+                    }}
+                    title="Cambiar Logo"
+                  />
                 </div>
               </div>
             </div>
