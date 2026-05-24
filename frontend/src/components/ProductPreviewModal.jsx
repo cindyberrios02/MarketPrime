@@ -140,7 +140,7 @@ const ProductPreviewModal = ({ slug, onClose }) => {
             <button onClick={onClose} className="btn btn-black">Cerrar</button>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1.1fr) 1fr', gap: '32px', padding: '32px' }}>
+          <div className="modal-grid">
             
             {/* Left Column: Media Gallery */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -329,6 +329,19 @@ const ProductPreviewModal = ({ slug, onClose }) => {
         )}
       </div>
       <style>{`
+        .modal-grid {
+          display: grid;
+          grid-template-columns: minmax(300px, 1.1fr) 1fr;
+          gap: 32px;
+          padding: 32px;
+        }
+        @media (max-width: 768px) {
+          .modal-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+            padding: 16px;
+          }
+        }
         @keyframes fadeIn {
           from { opacity: 0; }
           to { opacity: 1; }

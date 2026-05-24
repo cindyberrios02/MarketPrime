@@ -924,10 +924,7 @@ const HomePage = () => {
 
       {/* 4. VALUE PROPOSITION BANNER */}
       <section className="container" style={{ marginTop: '20px' }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '32px',
+        <div className="grid-3" style={{
           backgroundColor: 'var(--color-black)',
           color: 'var(--text-white)',
           padding: '48px 32px',

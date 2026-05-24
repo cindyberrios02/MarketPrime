@@ -149,7 +149,7 @@ const SearchPage = () => {
   };
 
   return (
-    <div className="fade-in container" style={{ padding: '32px 0 64px 0' }}>
+    <div className="fade-in container" style={{ paddingTop: '32px', paddingBottom: '64px' }}>
       
       {/* Header Info */}
       <div style={{
