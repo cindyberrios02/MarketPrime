@@ -32,6 +32,7 @@ const ProductPage = () => {
   const [submittingReview, setSubmittingReview] = useState(false);
 
   useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to top when entering product page
     const fetchProductAndReviews = async () => {
       setLoading(true);
       setError(null);
@@ -187,13 +188,7 @@ const ProductPage = () => {
       </Link>
 
       {/* Grid del Producto */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'minmax(400px, 1.2fr) 1fr',
-        gap: '48px',
-        marginBottom: '64px',
-        alignItems: 'start'
-      }}>
+      <div className="product-layout">
         
         {/* GALERÍA DE IMÁGENES (Izquierda) */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -395,7 +390,7 @@ const ProductPage = () => {
           <MessageSquare size={24} /> Opiniones de Compradores
         </h2>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '48px', alignItems: 'start' }}>
+        <div className="reviews-layout">
           
           {/* DEJAR UNA RESEÑA (Izquierda) */}
           <div>
@@ -533,6 +528,30 @@ const ProductPage = () => {
       </section>
 
       <style>{`
+        .product-layout {
+          display: grid;
+          grid-template-columns: minmax(400px, 1.2fr) 1fr;
+          gap: 48px;
+          margin-bottom: 64px;
+          align-items: start;
+        }
+        .reviews-layout {
+          display: grid;
+          grid-template-columns: 1fr 1.5fr;
+          gap: 48px;
+          align-items: start;
+        }
+        @media (max-width: 868px) {
+          .product-layout {
+            grid-template-columns: 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+          }
+          .reviews-layout {
+            grid-template-columns: 1fr;
+            gap: 32px;
+          }
+        }
         .hover-gold-pill:hover {
           color: #ffffff !important;
           border-color: #c5a059 !important;
