@@ -484,6 +484,9 @@ const SearchPage = () => {
           .search-layout {
             grid-template-columns: 1fr;
           }
+          .product-image-overlay {
+            display: none !important;
+          }
         }
         .product-image-container:hover .product-image-overlay {
           opacity: 1 !important;

@@ -237,10 +237,23 @@ const HomePage = () => {
             grid-template-columns: 1fr;
             text-align: center;
             gap: 30px;
-            padding: 0 20px;
+            padding: 0 10px;
           }
           .hero-visual {
             display: none;
+          }
+          .hero-control-btn {
+            top: auto !important;
+            bottom: 16px !important;
+            transform: none !important;
+            width: 40px;
+            height: 40px;
+          }
+          .hero-control-btn:hover {
+            transform: scale(1.1) !important;
+          }
+          .product-image-overlay {
+            display: none !important;
           }
         }
         .hero-section-bg {
@@ -284,7 +297,7 @@ const HomePage = () => {
         }
         @media (max-width: 768px) {
           .hero-section-bg {
-            padding: 60px 20px 80px 20px;
+            padding: 40px 16px 80px 16px;
           }
           .hero-title {
             font-size: 32px;
