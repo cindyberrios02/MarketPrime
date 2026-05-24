@@ -64,14 +64,6 @@ public class DataSeeder implements ApplicationRunner {
                 log.info("Migrated existing product '{}' from DRAFT to ACTIVE", p.getName());
             }
         });
-
-        // Cleanup any products with no images (user requested not to leave products without images)
-        productRepository.findAll().forEach(p -> {
-            if (p.getImages() == null || p.getImages().isEmpty()) {
-                productRepository.delete(p);
-                log.info("Deleted product '{}' because it had no images.", p.getName());
-            }
-        });
     }
 
     private void seedCategories() {
