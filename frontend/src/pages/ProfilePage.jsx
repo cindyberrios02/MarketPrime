@@ -954,8 +954,9 @@ const ProfilePage = () => {
                         
                         <div style={{ width: '100%', height: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', overflow: 'hidden', marginBottom: '12px' }}>
                           <img
-                            src={prod.imageUrl || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80'}
+                            src={prod.imageUrl || 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Imagen'}
                             alt={prod.name}
+                            onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Imagen'; }}
                             style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
                           />
                         </div>

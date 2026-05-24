@@ -703,8 +703,9 @@ const SellerDashboard = () => {
                       <td style={{ padding: '16px 24px', display: 'flex', alignItems: 'center', gap: '16px' }}>
                         <div style={{ width: '48px', height: '48px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '1px solid var(--border-light)' }}>
                           <img
-                            src={prod.imageUrl || (prod.images && prod.images.find(img => img.primary)?.imageUrl) || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=80&q=80'}
+                            src={prod.imageUrl || (prod.images && prod.images.find(img => img.primary)?.imageUrl) || 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Imagen'}
                             alt={prod.name}
+                            onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Imagen'; }}
                             style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
                           />
                         </div>
@@ -1076,7 +1077,12 @@ const SellerDashboard = () => {
                   overflow: 'hidden'
                 }}>
                   {settingsForm.logoUrl ? (
-                    <img src={settingsForm.logoUrl} alt="Logo Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img 
+                      src={settingsForm.logoUrl || 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Logo'} 
+                      alt="Logo Preview" 
+                      onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Logo'; }}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                    />
                   ) : (
                     <Store size={36} style={{ color: 'var(--text-tertiary)' }} />
                   )}

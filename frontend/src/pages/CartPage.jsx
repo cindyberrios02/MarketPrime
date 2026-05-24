@@ -117,8 +117,9 @@ const CartPage = () => {
                   flexShrink: 0
                 }}>
                   <img
-                    src={item.imageUrl || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80'}
+                    src={item.imageUrl || 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Imagen'}
                     alt={item.productName}
+                    onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Imagen'; }}
                     style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
                   />
                 </div>

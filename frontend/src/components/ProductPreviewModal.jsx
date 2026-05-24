@@ -156,8 +156,9 @@ const ProductPreviewModal = ({ slug, onClose }) => {
                 overflow: 'hidden'
               }}>
                 <img
-                  src={activeImage}
+                  src={activeImage || 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Imagen'}
                   alt={product.name}
+                  onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Imagen'; }}
                   style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
                 />
               </div>
@@ -180,7 +181,12 @@ const ProductPreviewModal = ({ slug, onClose }) => {
                         flexShrink: 0
                       }}
                     >
-                      <img src={img.url} alt="thumbnail" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                      <img 
+                        src={img.url || 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Imagen'} 
+                        alt="thumbnail" 
+                        onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Imagen'; }}
+                        style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
+                      />
                     </button>
                   ))}
                 </div>

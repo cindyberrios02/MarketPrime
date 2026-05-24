@@ -232,7 +232,12 @@ const StoreProfilePage = () => {
               transition: 'transform 0.3s ease'
             }} className="store-logo-hover">
               {store.logoUrl ? (
-                <img src={store.logoUrl} alt={store.storeName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img 
+                  src={store.logoUrl || 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Logo'} 
+                  alt={store.storeName} 
+                  onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Logo'; }}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                />
               ) : (
                 <Store size={52} style={{ color: '#c5a059' }} />
               )}
@@ -632,8 +637,9 @@ const StoreProfilePage = () => {
                         marginBottom: '12px'
                       }}>
                         <img
-                          src={prod.imageUrl || (prod.images && prod.images[0]?.url) || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80'}
+                          src={prod.imageUrl || (prod.images && prod.images[0]?.url) || 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Imagen'}
                           alt={prod.name}
+                          onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Imagen'; }}
                           style={{
                             maxWidth: '90%',
                             maxHeight: '90%',
@@ -798,8 +804,9 @@ const StoreProfilePage = () => {
                       position: 'relative'
                     }}>
                       <img
-                        src={prod.imageUrl || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80'}
+                        src={prod.imageUrl || 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Imagen'}
                         alt={prod.name}
+                        onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Imagen'; }}
                         style={{
                           maxWidth: '100%',
                           maxHeight: '100%',
