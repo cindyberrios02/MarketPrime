@@ -26,21 +26,29 @@ public class AzureBlobService {
 
     @PostConstruct
     public void init() {
-        BlobServiceClient blobServiceClient = new BlobServiceClientBuilder()
-                .connectionString(connectionString)
-                .buildClient();
-        
-        containerClient = blobServiceClient.getBlobContainerClient(containerName);
-        
-        // Create container if it doesn't exist
-        if (!containerClient.exists()) {
-            containerClient.create();
-            // In a real production scenario with private containers, 
-            // you'd set public access policies. For now, assuming standard setup.
+        try {
+            BlobServiceClient blobServiceClient = new BlobServiceClientBuilder()
+                    .connectionString(connectionString)
+                    .buildClient();
+            
+            containerClient = blobServiceClient.getBlobContainerClient(containerName);
+            
+            // Create container if it doesn't exist
+            if (!containerClient.exists()) {
+                containerClient.create();
+            }
+        } catch (Exception e) {
+            System.err.println("WARNING: Could not connect to Azure Blob Storage on startup: " + e.getMessage());
+            // Store the error so we can throw it when they actually try to upload
+            this.containerClient = null;
         }
     }
 
     public String uploadImage(MultipartFile file) throws IOException {
+        if (containerClient == null) {
+            throw new IOException("El servidor no pudo conectarse a Azure Blob Storage. Revisa que el AZURE_STORAGE_CONNECTION_STRING esté bien configurado en las variables de entorno de Azure.");
+        }
+        
         String originalFilename = file.getOriginalFilename();
         String extension = "";
         if (originalFilename != null && originalFilename.contains(".")) {

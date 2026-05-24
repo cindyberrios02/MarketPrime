@@ -33,9 +33,12 @@ public class UploadController {
             // Return the public URL
             return ResponseEntity.ok(Map.of("url", imageUrl));
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.internalServerError().body(Map.of("error", "Failed to upload image: " + e.getMessage()));
+            return ResponseEntity.internalServerError().body(Map.of(
+                "error", "Failed to upload image",
+                "detail", e.getClass().getSimpleName() + ": " + e.getMessage()
+            ));
         }
     }
 }
