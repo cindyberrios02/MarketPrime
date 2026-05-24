@@ -119,6 +119,10 @@ public class ProductService {
                                     String altText, boolean makePrimary) {
         Product product = findOwnedProduct(sellerEmail, productId);
 
+        if (product.getImages().size() >= 5) {
+            throw new IllegalArgumentException("El producto ya tiene el máximo permitido de 5 imágenes.");
+        }
+
         if (makePrimary) {
             imageRepository.clearPrimaryByProductId(productId);
         }

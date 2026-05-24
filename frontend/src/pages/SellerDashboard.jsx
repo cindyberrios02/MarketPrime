@@ -37,8 +37,8 @@ const SellerDashboard = () => {
   // Modals / Form States
   const [showProductModal, setShowProductModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState('');
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [productImages, setProductImages] = useState([]); // Imágenes guardadas en BD
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [productForm, setProductForm] = useState({
@@ -49,7 +49,6 @@ const SellerDashboard = () => {
     salePrice: '',
     stockQuantity: '10',
     categoryId: '',
-    imageUrl: '',
     status: 'ACTIVE'
   });
 
@@ -214,10 +213,42 @@ const SellerDashboard = () => {
   };
 
   // CRUD Product Actions
+  const handleOpenEditModal = async (prod) => {
+    // Al editar, obtenemos el producto completo para no perder la descripción ni la categoría
+    try {
+      setLoadingAction(true);
+      const response = await api.get(`/api/products/${prod.slug}`);
+      const fullProd = response.data;
+      
+      setEditingProduct(fullProd);
+      setSelectedFiles([]);
+      setProductImages(fullProd.images || []);
+      setUploadProgress(0);
+      setIsUploading(false);
+      setProductForm({
+        name: fullProd.name || '',
+        slug: fullProd.slug || '',
+        description: fullProd.description || '',
+        basePrice: fullProd.basePrice?.toString() || '',
+        salePrice: fullProd.salePrice?.toString() || '',
+        stockQuantity: fullProd.stockQuantity?.toString() || '0',
+        categoryId: fullProd.categoryId || fullProd.category?.id || '',
+        status: fullProd.status || 'ACTIVE'
+      });
+      setError(null);
+      setShowProductModal(true);
+    } catch (err) {
+      console.error('Error fetching full product:', err);
+      showToast('Error al cargar los detalles completos del producto.', 'error');
+    } finally {
+      setLoadingAction(false);
+    }
+  };
+
   const handleOpenCreateModal = () => {
     setEditingProduct(null);
-    setSelectedFile(null);
-    setImagePreview('');
+    setSelectedFiles([]);
+    setProductImages([]);
     setUploadProgress(0);
     setIsUploading(false);
     setProductForm({
@@ -227,41 +258,49 @@ const SellerDashboard = () => {
       basePrice: '',
       salePrice: '',
       stockQuantity: '10',
-      categoryId: categories[0]?.id || '',
-      imageUrl: '',
+      categoryId: '',
       status: 'ACTIVE'
     });
     setError(null);
     setShowProductModal(true);
   };
 
-  const handleOpenEditModal = (prod) => {
-    setEditingProduct(prod);
-    setSelectedFile(null);
-    setUploadProgress(0);
-    setIsUploading(false);
-    const primaryImg = prod.imageUrl || (prod.images && prod.images.find(img => img.primary)?.imageUrl) || '';
-    setImagePreview(primaryImg);
-    setProductForm({
-      name: prod.name || '',
-      slug: prod.slug || '',
-      description: prod.description || '',
-      basePrice: prod.basePrice?.toString() || '',
-      salePrice: prod.salePrice?.toString() || '',
-      stockQuantity: prod.stockQuantity?.toString() || '0',
-      categoryId: prod.category?.id || prod.categoryId || '',
-      imageUrl: primaryImg,
-      status: prod.status || 'ACTIVE'
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    
+    // Calcular cuántas fotos más puede subir (máximo 5 en total)
+    const availableSlots = 5 - (productImages.length + selectedFiles.length);
+    if (availableSlots <= 0) {
+      showToast('Ya has alcanzado el límite de 5 fotos.', 'error');
+      return;
+    }
+    
+    const filesToAdd = files.slice(0, availableSlots);
+    const newFilesWithPreview = filesToAdd.map(file => {
+      file.previewUrl = URL.createObjectURL(file);
+      return file;
     });
-    setError(null);
-    setShowProductModal(true);
+    
+    setSelectedFiles([...selectedFiles, ...newFilesWithPreview]);
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setSelectedFile(file);
-      setImagePreview(URL.createObjectURL(file));
+  const removeLocalFile = (indexToRemove) => {
+    setSelectedFiles(selectedFiles.filter((_, index) => index !== indexToRemove));
+  };
+
+  const removeSavedImage = async (imageId) => {
+    if (!editingProduct) return;
+    try {
+      setLoadingAction(true);
+      await api.delete(`/api/products/${editingProduct.id}/images/${imageId}`);
+      setProductImages(productImages.filter(img => img.id !== imageId));
+      showToast('Foto eliminada con éxito', 'success');
+      fetchProducts(); // Refrescar tabla si era la principal
+    } catch (err) {
+      showToast('Error al eliminar la foto', 'error');
+    } finally {
+      setLoadingAction(false);
     }
   };
 
@@ -294,26 +333,32 @@ const SellerDashboard = () => {
         showToast('¡Producto creado con éxito!', 'success');
       }
 
-      // Subir archivo físico si está seleccionado
-      if (selectedFile) {
+      // Subir archivos físicos seleccionados
+      if (selectedFiles.length > 0) {
         setIsUploading(true);
-        setUploadProgress(0);
+        // Calcular si alguna foto de las nuevas debe ser primaria (si no hay ninguna en BD y es la primera de este lote)
+        const hasPrimaryInDb = productImages.some(img => img.primary);
         
-        try {
-          // Subir la imagen comprimida hacia Azure Blob Storage a través de nuestro backend
-          const azureUrl = await uploadImage(selectedFile, setUploadProgress);
-          
-          // Enlazar la nueva URL al producto creado
-          await api.post(`/api/products/${savedProduct.id}/images?url=${encodeURIComponent(azureUrl)}&primary=true`);
-          
-          showToast('¡Imagen optimizada y subida con éxito!', 'success');
-        } catch (uploadErr) {
-          console.error('Error uploading product image:', uploadErr);
-          showToast('El producto se guardó, pero hubo un error subiendo la imagen.', 'warning');
+        for (let i = 0; i < selectedFiles.length; i++) {
+          const file = selectedFiles[i];
+          try {
+            setUploadProgress(0); // Reinicia progreso por cada archivo
+            const isPrimary = !hasPrimaryInDb && i === 0;
+            const imageUrl = await uploadImage(file, (progress) => setUploadProgress(progress));
+            
+            await api.post(`/api/products/${savedProduct.id}/images`, null, {
+              params: {
+                url: imageUrl,
+                altText: savedProduct.name,
+                primary: isPrimary
+              }
+            });
+          } catch (err) {
+            console.error('Error uploading one of the files', err);
+            showToast(`Error al subir la imagen ${i + 1}`, 'error');
+          }
         }
-      } else if (productForm.imageUrl && productForm.imageUrl !== (editingProduct?.imageUrl || (editingProduct?.images && editingProduct.images.find(img => img.primary)?.imageUrl))) {
-        // Enlazar imagen vía URL si ha cambiado o es nueva
-        await api.post(`/api/products/${savedProduct.id}/images?url=${encodeURIComponent(productForm.imageUrl)}&primary=true`);
+        showToast('Nuevas imágenes subidas con éxito', 'success');
       }
 
       setShowProductModal(false);
@@ -1364,86 +1409,86 @@ const SellerDashboard = () => {
               {/* Image Uploader & Status Container */}
               <div style={{ display: 'grid', gridTemplateColumns: editingProduct ? '1.2fr 1fr' : '1fr', gap: '24px', marginBottom: '20px' }}>
                 
-                {/* Left Column: Image physical upload & fallback URL */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                  {/* Custom Premium File Selector */}
-                  <div className="form-group">
-                    <label className="form-label">Imagen Principal del Producto</label>
-                    <div style={{
-                      border: '2px dashed rgba(197, 160, 89, 0.4)',
-                      borderRadius: 'var(--radius-md)',
-                      padding: '24px 20px',
-                      textAlign: 'center',
-                      backgroundColor: 'var(--bg-secondary)',
-                      position: 'relative',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease',
-                    }}
-                    onMouseOver={(e) => e.currentTarget.style.borderColor = 'var(--color-gold)'}
-                    onMouseOut={(e) => e.currentTarget.style.borderColor = 'rgba(197, 160, 89, 0.4)'}
-                    >
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                        style={{
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          width: '100%',
-                          height: '100%',
-                          opacity: 0,
-                          cursor: 'pointer',
-                          zIndex: 2
-                        }}
-                      />
-                      {imagePreview ? (
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-                          <img src={imagePreview} alt="Preview" style={{ maxHeight: '140px', maxWidth: '100%', borderRadius: 'var(--radius-md)', objectFit: 'contain', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
-                          <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: '600' }}>Haz clic o arrastra para cambiar la foto</span>
-                        </div>
-                      ) : (
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-                          <div style={{ padding: '12px', borderRadius: '50%', backgroundColor: 'var(--color-gold-light)', color: 'var(--color-gold)', display: 'inline-flex' }}>
-                            <Upload size={24} />
-                          </div>
-                          <span style={{ fontSize: '14px', fontWeight: '700', color: 'var(--color-black)' }}>Sube una foto real del producto</span>
-                          <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>Formatos PNG, JPG, WEBP de hasta 10MB</span>
-                        </div>
-                      )}
-                    </div>
+                {/* Left Column: Image physical upload */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <label className="form-label">Fotos del Producto (Máx 5)</label>
+                  
+                  {/* Grid de imágenes existentes + nuevas */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '12px' }}>
                     
-                    {isUploading && (
-                      <div style={{ marginTop: '12px' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px', fontWeight: '600' }}>
-                          <span style={{ color: 'var(--color-gold)' }}>Subiendo imagen...</span>
-                          <span>{uploadProgress}%</span>
-                        </div>
-                        <div style={{ height: '6px', backgroundColor: 'var(--border-light)', borderRadius: '3px', overflow: 'hidden' }}>
-                          <div style={{ width: `${uploadProgress}%`, height: '100%', backgroundColor: 'var(--color-gold)', transition: 'width 0.2s ease-out' }}></div>
+                    {/* Imágenes de BD */}
+                    {productImages.map((img) => (
+                      <div key={img.id} style={{ position: 'relative', height: '100px', borderRadius: 'var(--radius-md)', overflow: 'hidden', border: '1px solid var(--border-light)' }}>
+                        <img src={img.url} alt="Prod" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <button 
+                          type="button" 
+                          onClick={() => removeSavedImage(img.id)}
+                          style={{ position: 'absolute', top: '4px', right: '4px', background: 'rgba(0,0,0,0.6)', color: 'white', border: 'none', borderRadius: '50%', width: '24px', height: '24px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ))}
+
+                    {/* Imágenes locales a punto de subirse */}
+                    {selectedFiles.map((file, idx) => (
+                      <div key={`local-${idx}`} style={{ position: 'relative', height: '100px', borderRadius: 'var(--radius-md)', overflow: 'hidden', border: '2px solid var(--color-gold)' }}>
+                        <img src={file.previewUrl} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <span style={{ position: 'absolute', bottom: '0', left: '0', right: '0', background: 'rgba(197, 160, 89, 0.9)', color: 'white', fontSize: '10px', textAlign: 'center', padding: '2px' }}>Nueva</span>
+                        <button 
+                          type="button" 
+                          onClick={() => removeLocalFile(idx)}
+                          style={{ position: 'absolute', top: '4px', right: '4px', background: 'rgba(0,0,0,0.6)', color: 'white', border: 'none', borderRadius: '50%', width: '24px', height: '24px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ))}
+
+                    {/* Botón Añadir Foto */}
+                    {(productImages.length + selectedFiles.length) < 5 && (
+                      <div style={{
+                        height: '100px',
+                        border: '2px dashed rgba(197, 160, 89, 0.4)',
+                        borderRadius: 'var(--radius-md)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: 'var(--bg-secondary)',
+                        position: 'relative',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.borderColor = 'var(--color-gold)'}
+                      onMouseOut={(e) => e.currentTarget.style.borderColor = 'rgba(197, 160, 89, 0.4)'}
+                      >
+                        <input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={handleFileChange}
+                          disabled={isUploading}
+                          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }}
+                        />
+                        <div style={{ color: 'var(--color-gold)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                          <Plus size={24} />
+                          <span style={{ fontSize: '11px', fontWeight: '600' }}>Añadir Foto</span>
                         </div>
                       </div>
                     )}
                   </div>
-
-                  {/* Collapsible / Fallback URL Input */}
-                  <div className="form-group" style={{ borderTop: '1px solid var(--border-light)', paddingTop: '16px' }}>
-                    <label className="form-label" htmlFor="prod-img" style={{ fontSize: '13px', color: 'var(--text-secondary)', display: 'block', marginBottom: '8px' }}>
-                      O introduce una URL de imagen externa (opcional)
-                    </label>
-                    <div style={{ position: 'relative' }}>
-                      <input
-                        id="prod-img"
-                        type="url"
-                        className="form-input"
-                        placeholder="https://ejemplo.cl/imagen.jpg"
-                        value={productForm.imageUrl}
-                        onChange={(e) => setProductForm({ ...productForm, imageUrl: e.target.value })}
-                        style={{ paddingLeft: '36px' }}
-                      />
-                      <ImageIcon size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }} />
+                  
+                  {isUploading && (
+                    <div style={{ marginTop: '12px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px', fontWeight: '600' }}>
+                        <span style={{ color: 'var(--color-gold)' }}>Subiendo nuevas imágenes...</span>
+                        <span>{uploadProgress}%</span>
+                      </div>
+                      <div style={{ height: '6px', backgroundColor: 'var(--border-light)', borderRadius: '3px', overflow: 'hidden' }}>
+                        <div style={{ width: `${uploadProgress}%`, height: '100%', backgroundColor: 'var(--color-gold)', transition: 'width 0.2s ease-out' }}></div>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
 
                 {/* Right Column: Status (only in edit) */}
