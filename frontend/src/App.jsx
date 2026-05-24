@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ToastContainer from './components/Toast';
@@ -40,6 +40,19 @@ const PrivateRoute = ({ children, allowedRoles }) => {
   return children;
 };
 
+
+
+// Componente para scrollear al inicio en cada cambio de ruta
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+};
+
 function App() {
   const { init } = useAuthStore();
 
@@ -50,6 +63,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       {/* Barra de navegación global */}
       <Navbar />
 
