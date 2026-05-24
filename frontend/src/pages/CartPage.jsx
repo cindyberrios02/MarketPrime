@@ -73,7 +73,7 @@ const CartPage = () => {
           </Link>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '32px', alignItems: 'start' }}>
+        <div className="cart-layout">
           
           {/* LISTA DE ITEMS (Izquierda) */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -303,6 +303,20 @@ const CartPage = () => {
         </div>
       )}
 
+      <style>{`
+        .cart-layout {
+          display: grid;
+          grid-template-columns: 1fr 380px;
+          gap: 32px;
+          align-items: start;
+        }
+        @media (max-width: 868px) {
+          .cart-layout {
+            grid-template-columns: 1fr;
+            gap: 24px;
+          }
+        }
+      `}</style>
     </div>
   );
 };

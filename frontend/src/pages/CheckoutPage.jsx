@@ -236,7 +236,7 @@ const CheckoutPage = () => {
           <div className="spinner" style={{ width: '48px', height: '48px', borderWidth: '3px' }}></div>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '32px', alignItems: 'start' }}>
+        <div className="checkout-layout">
           
           {/* SECCIÓN DIRECCIÓN Y PAGO (Izquierda) */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
@@ -332,7 +332,7 @@ const CheckoutPage = () => {
                   )}
 
                   <form onSubmit={handleCreateAddress} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                    <div className="checkout-form-row">
                       <div className="form-group" style={{ marginBottom: 0 }}>
                         <label className="form-label" htmlFor="alias">Alias (ej. Casa, Oficina) *</label>
                         <input
@@ -359,7 +359,7 @@ const CheckoutPage = () => {
                       </div>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '12px' }}>
+                    <div className="checkout-form-row checkout-form-row-2">
                       <div className="form-group" style={{ marginBottom: 0 }}>
                         <label className="form-label" htmlFor="phone">Teléfono de Contacto *</label>
                         <input
@@ -386,7 +386,7 @@ const CheckoutPage = () => {
                       </div>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr 1.2fr', gap: '12px' }}>
+                    <div className="checkout-form-row checkout-form-row-3">
                       <div className="form-group" style={{ marginBottom: 0 }}>
                         <label className="form-label" htmlFor="number">Número *</label>
                         <input
@@ -605,6 +605,34 @@ const CheckoutPage = () => {
         </div>
       )}
 
+      <style>{`
+        .checkout-layout {
+          display: grid;
+          grid-template-columns: 1fr 380px;
+          gap: 32px;
+          align-items: start;
+        }
+        .checkout-form-row {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+        }
+        .checkout-form-row-2 {
+          grid-template-columns: 1.2fr 1fr;
+        }
+        .checkout-form-row-3 {
+          grid-template-columns: 1fr 1.2fr 1.2fr;
+        }
+        @media (max-width: 868px) {
+          .checkout-layout {
+            grid-template-columns: 1fr;
+            gap: 24px;
+          }
+          .checkout-form-row, .checkout-form-row-2, .checkout-form-row-3 {
+            grid-template-columns: 1fr;
+          }
+        }
+      `}</style>
     </div>
   );
 };
