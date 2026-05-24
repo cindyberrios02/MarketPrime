@@ -31,7 +31,9 @@ import java.util.Set;
 import java.util.List;
 import java.util.ArrayList;
 
-//@Component // Deshabilitado para producción para evitar bucles de reinicio o demoras en el arranque
+import org.springframework.stereotype.Component;
+
+@Component
 @RequiredArgsConstructor
 @Slf4j
 public class DataSeeder implements ApplicationRunner {
@@ -50,48 +52,54 @@ public class DataSeeder implements ApplicationRunner {
         seedRoles();
         seedAdminUser();
         seedCategories();
-        List<StoreProfile> stores = seedStores();
-        seedProducts(stores);
-        List<User> buyers = seedBuyers();
-        List<Product> products = productRepository.findAll();
-        seedReviews(products, buyers);
+        
+        // Disabled heavy seeding to prevent startup timeouts
+        // List<StoreProfile> stores = seedStores();
+        // seedProducts(stores);
+        // List<User> buyers = seedBuyers();
+        // List<Product> products = productRepository.findAll();
+        // seedReviews(products, buyers);
 
         // Ensure any existing products created as DRAFT are migrated to ACTIVE so they are visible
-        productRepository.findAll().forEach(p -> {
-            if (p.getStatus() == ProductStatus.DRAFT) {
-                p.setStatus(ProductStatus.ACTIVE);
-                productRepository.save(p);
-                log.info("Migrated existing product '{}' from DRAFT to ACTIVE", p.getName());
-            }
-        });
+        // productRepository.findAll().forEach(p -> {
+        //     if (p.getStatus() == ProductStatus.DRAFT) {
+        //         p.setStatus(ProductStatus.ACTIVE);
+        //         productRepository.save(p);
+        //         log.info("Migrated existing product '{}' from DRAFT to ACTIVE", p.getName());
+        //     }
+        // });
     }
 
     private void seedCategories() {
-        if (categoryRepository.count() > 0) return;
-
-        Category deportes = categoryRepository.save(Category.builder()
-                .name("Deportes").slug("deportes").displayOrder(1).build());
-
-        Category ropa = categoryRepository.save(Category.builder()
-                .name("Ropa").slug("ropa").displayOrder(2).build());
-
-        Category herramientas = categoryRepository.save(Category.builder()
-                .name("Herramientas").slug("herramientas").displayOrder(3).build());
+        Category deportes = createCategoryIfNotFound("Deportes", "deportes", 1, null);
+        Category ropa = createCategoryIfNotFound("Ropa", "ropa", 2, null);
+        Category herramientas = createCategoryIfNotFound("Herramientas", "herramientas", 3, null);
+        
+        // Nuevas categorías principales
+        createCategoryIfNotFound("Muebles", "muebles", 4, null);
+        createCategoryIfNotFound("Decoración", "decoracion", 5, null);
+        createCategoryIfNotFound("Tecnología", "tecnologia", 6, null);
+        createCategoryIfNotFound("Belleza", "belleza", 7, null);
+        createCategoryIfNotFound("Salud", "salud", 8, null);
+        createCategoryIfNotFound("Niños", "ninos", 9, null);
+        createCategoryIfNotFound("Cocina", "cocina", 10, null);
+        createCategoryIfNotFound("Jardín", "jardin", 11, null);
+        createCategoryIfNotFound("Accesorios", "accesorios", 12, null);
 
         // Subcategorías
-        categoryRepository.save(Category.builder()
-                .name("Fútbol").slug("futbol").parent(deportes).displayOrder(1).build());
-        categoryRepository.save(Category.builder()
-                .name("Running").slug("running").parent(deportes).displayOrder(2).build());
-        categoryRepository.save(Category.builder()
-                .name("Ropa Hombre").slug("ropa-hombre").parent(ropa).displayOrder(1).build());
-        categoryRepository.save(Category.builder()
-                .name("Ropa Mujer").slug("ropa-mujer").parent(ropa).displayOrder(2).build());
-        categoryRepository.save(Category.builder()
-                .name("Herramientas Eléctricas").slug("herramientas-electricas")
-                .parent(herramientas).displayOrder(1).build());
+        createCategoryIfNotFound("Fútbol", "futbol", 1, deportes);
+        createCategoryIfNotFound("Running", "running", 2, deportes);
+        createCategoryIfNotFound("Ropa Hombre", "ropa-hombre", 1, ropa);
+        createCategoryIfNotFound("Ropa Mujer", "ropa-mujer", 2, ropa);
+        createCategoryIfNotFound("Herramientas Eléctricas", "herramientas-electricas", 1, herramientas);
 
         log.info("Seeded categories");
+    }
+
+    private Category createCategoryIfNotFound(String name, String slug, int displayOrder, Category parent) {
+        return categoryRepository.findBySlug(slug).orElseGet(() -> 
+            categoryRepository.save(Category.builder().name(name).slug(slug).displayOrder(displayOrder).parent(parent).build())
+        );
     }
 
     private void seedRoles() {

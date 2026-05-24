@@ -158,7 +158,7 @@ const HomePage = () => {
           let icon = "📦";
           let count = "50+ Prod.";
           const slug = cat.slug?.toLowerCase();
-          if (slug.includes("deportes")) {
+          if (slug.includes("deportes") || slug.includes("futbol") || slug.includes("running")) {
             icon = "⚽";
             count = "90+ Prod.";
           } else if (slug.includes("ropa")) {
@@ -170,6 +170,30 @@ const HomePage = () => {
           } else if (slug.includes("tecnologia") || slug.includes("electro")) {
             icon = "💻";
             count = "200+ Prod.";
+          } else if (slug.includes("muebles")) {
+            icon = "🛋️";
+            count = "150+ Prod.";
+          } else if (slug.includes("decoracion")) {
+            icon = "🖼️";
+            count = "80+ Prod.";
+          } else if (slug.includes("belleza")) {
+            icon = "💄";
+            count = "110+ Prod.";
+          } else if (slug.includes("salud")) {
+            icon = "💊";
+            count = "60+ Prod.";
+          } else if (slug.includes("ninos") || slug.includes("niños")) {
+            icon = "🧸";
+            count = "230+ Prod.";
+          } else if (slug.includes("cocina")) {
+            icon = "🍳";
+            count = "140+ Prod.";
+          } else if (slug.includes("jardin")) {
+            icon = "🪴";
+            count = "70+ Prod.";
+          } else if (slug.includes("accesorios")) {
+            icon = "🕶️";
+            count = "210+ Prod.";
           }
           return { id: cat.id, name: cat.name, slug: cat.slug, icon, count };
         });
