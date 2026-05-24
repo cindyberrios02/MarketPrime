@@ -433,7 +433,7 @@ const ProfilePage = () => {
       )}
 
       {/* Grid del Dashboard */}
-      <div style={{ display: 'grid', gridTemplateColumns: '240px 1fr', gap: '40px', alignItems: 'start' }}>
+      <div className="profile-layout">
         
         {/* SIDE BAR NAVIGATION TABS */}
         <aside style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -530,7 +530,7 @@ const ProfilePage = () => {
                 <h3 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '24px', color: 'var(--color-black)' }}>
                   Información Personal
                 </h3>
-                <form onSubmit={handleUpdateProfile} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                <form onSubmit={handleUpdateProfile} className="profile-form-row" style={{ gap: '20px' }}>
                   <div className="form-group" style={{ marginBottom: 0 }}>
                     <label className="form-label" htmlFor="first-name">Nombre</label>
                     <input
@@ -575,7 +575,7 @@ const ProfilePage = () => {
                 <h3 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '24px', color: 'var(--color-black)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <Lock size={18} /> Cambiar Contraseña
                 </h3>
-                <form onSubmit={handleChangePassword} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                <form onSubmit={handleChangePassword} className="profile-form-row" style={{ gap: '20px' }}>
                   <div className="form-group" style={{ gridColumn: 'span 2', marginBottom: 0 }}>
                     <label className="form-label" htmlFor="old-pass">Contraseña Actual</label>
                     <input
@@ -637,7 +637,7 @@ const ProfilePage = () => {
                     {editingAddressId ? 'Editar Dirección' : 'Nueva Dirección de Envío'}
                   </h4>
                   <form onSubmit={handleSaveAddress} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                    <div className="profile-form-row" style={{ gap: '12px' }}>
                       <div className="form-group" style={{ marginBottom: 0 }}>
                         <label className="form-label" htmlFor="alias">Alias (ej. Casa, Oficina) *</label>
                         <input
@@ -660,7 +660,7 @@ const ProfilePage = () => {
                       </div>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '12px' }}>
+                    <div className="profile-form-row profile-form-row-2" style={{ gap: '12px' }}>
                       <div className="form-group" style={{ marginBottom: 0 }}>
                         <label className="form-label" htmlFor="phone">Teléfono de Contacto *</label>
                         <input
@@ -683,7 +683,7 @@ const ProfilePage = () => {
                       </div>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr 1.2fr', gap: '12px' }}>
+                    <div className="profile-form-row profile-form-row-3" style={{ gap: '12px' }}>
                       <div className="form-group" style={{ marginBottom: 0 }}>
                         <label className="form-label" htmlFor="number">Número *</label>
                         <input
@@ -764,7 +764,7 @@ const ProfilePage = () => {
                   Aún no has guardado ninguna dirección de envío.
                 </div>
               ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                <div className="profile-grid-2" style={{ gap: '20px' }}>
                   {addresses.map((addr) => (
                     <div key={addr.id} className="card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left', border: addr.isDefault ? '1px solid var(--color-gold)' : '1px solid var(--border-light)' }}>
                       <div>
@@ -1347,6 +1347,38 @@ const ProfilePage = () => {
         </main>
 
       </div>
+
+      <style>{`
+        .profile-layout {
+          display: grid;
+          grid-template-columns: 240px 1fr;
+          gap: 40px;
+          align-items: start;
+        }
+        .profile-form-row {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+        }
+        .profile-form-row-2 {
+          grid-template-columns: 1.2fr 1fr;
+        }
+        .profile-form-row-3 {
+          grid-template-columns: 1fr 1.2fr 1.2fr;
+        }
+        .profile-grid-2 {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+        }
+        @media (max-width: 868px) {
+          .profile-layout {
+            grid-template-columns: 1fr;
+            gap: 24px;
+          }
+          .profile-form-row, .profile-form-row-2, .profile-form-row-3, .profile-grid-2 {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </div>
   );
 };
