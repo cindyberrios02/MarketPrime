@@ -16,6 +16,7 @@ const ProductPage = () => {
   const { showToast } = useToastStore();
 
   const [product, setProduct] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -41,6 +42,11 @@ const ProductPage = () => {
         const productRes = await api.get(`/api/products/${slug}`);
         const productData = productRes.data;
         setProduct(productData);
+        if (productData.images && productData.images.length > 0) {
+          setSelectedImage(productData.images.find(img => img.primary)?.url || productData.images[0].url);
+        } else {
+          setSelectedImage(productData.imageUrl);
+        }
 
         // 2. Cargar reseñas
         try {
@@ -202,12 +208,42 @@ const ProductPage = () => {
             overflow: 'hidden'
           }}>
             <img
-              src={product.imageUrl || 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Imagen'}
+              src={selectedImage || 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Imagen'}
               alt={product.name}
               onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Imagen'; }}
               style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
             />
           </div>
+          
+          {/* Thumbnails */}
+          {product.images && product.images.length > 1 && (
+            <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '8px' }}>
+              {product.images.sort((a, b) => a.displayOrder - b.displayOrder).map((img) => (
+                <div
+                  key={img.id}
+                  onClick={() => setSelectedImage(img.url)}
+                  style={{
+                    width: '80px',
+                    height: '80px',
+                    borderRadius: '8px',
+                    border: selectedImage === img.url ? '2px solid var(--color-gold)' : '1px solid var(--border-light)',
+                    backgroundColor: 'var(--bg-secondary)',
+                    overflow: 'hidden',
+                    cursor: 'pointer',
+                    flexShrink: 0,
+                    opacity: selectedImage === img.url ? 1 : 0.6,
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <img
+                    src={img.url}
+                    alt={img.altText || product.name}
+                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* DETALLE DE COMPRA (Derecha) */}

@@ -19,6 +19,7 @@ import useCartStore from "../store/useCartStore";
 import ProductPreviewModal from "../components/ProductPreviewModal";
 import { formatCLP } from "../services/utils";
 import useToastStore from "../store/useToastStore";
+import ImageSlider from "../components/ImageSlider";
 
 const FALLBACK_CATEGORIES = [
   {
@@ -1272,17 +1273,7 @@ const HomePage = () => {
                     position: "relative",
                   }}
                 >
-                  <img
-                    src={prod.imageUrl || 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Imagen'}
-                    alt={prod.name}
-                    onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Imagen'; }}
-                    style={{
-                      maxWidth: "100%",
-                      maxHeight: "100%",
-                      objectFit: "contain",
-                      transition: "transform 0.3s ease",
-                    }}
-                  />
+                  <ImageSlider images={prod.imageUrls || [prod.imageUrl]} fallbackText="Sin Imagen" />
                   {/* Floating Premium Hover Overlay */}
                   <div
                     className="product-image-overlay"

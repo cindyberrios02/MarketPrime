@@ -324,6 +324,10 @@ public class ProductService {
                 .findFirst()
                 .orElse(null);
 
+        java.util.List<String> imageUrls = p.getImages().stream()
+                .map(ProductImage::getUrl)
+                .toList();
+
         BigDecimal effPrice = effectivePrice(p);
 
         Double avgRating = reviewRepository.getAverageRatingForProduct(p.getId());
@@ -341,6 +345,7 @@ public class ProductService {
                 p.getCategory().getName(),
                 p.getStore().getStoreName(), p.getStore().getSlug(),
                 primaryImageUrl,
+                imageUrls,
                 effPrice, primaryImageUrl, p.getStockQuantity(),
                 avgRating, revCount
         );

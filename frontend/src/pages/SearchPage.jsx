@@ -6,6 +6,7 @@ import useAuthStore from '../store/useAuthStore';
 import useCartStore from '../store/useCartStore';
 import ProductPreviewModal from '../components/ProductPreviewModal';
 import { formatCLP } from '../services/utils';
+import ImageSlider from '../components/ImageSlider';
 import useToastStore from '../store/useToastStore';
 
 const SearchPage = () => {
@@ -328,16 +329,7 @@ const SearchPage = () => {
                     marginBottom: '16px',
                     position: 'relative'
                   }}>
-                    <img
-                      src={prod.imageUrl || 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Imagen'}
-                      alt={prod.name}
-                      onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Imagen'; }}
-                      style={{
-                        maxWidth: '100%',
-                        maxHeight: '100%',
-                        objectFit: 'contain'
-                      }}
-                    />
+                    <ImageSlider images={prod.imageUrls || [prod.imageUrl]} fallbackText="Sin Imagen" />
                     {/* Floating Premium Hover Overlay */}
                     <div className="product-image-overlay" style={{
                       position: 'absolute',

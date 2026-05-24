@@ -7,6 +7,7 @@ import useAuthStore from '../store/useAuthStore';
 import useCartStore from '../store/useCartStore';
 import useToastStore from '../store/useToastStore';
 import ProductPreviewModal from '../components/ProductPreviewModal';
+import ImageSlider from '../components/ImageSlider';
 
 const StoreProfilePage = () => {
   const { slug } = useParams();
@@ -803,18 +804,7 @@ const StoreProfilePage = () => {
                       marginBottom: '16px',
                       position: 'relative'
                     }}>
-                      <img
-                        src={prod.imageUrl || 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Imagen'}
-                        alt={prod.name}
-                        onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/600x600/eeeeee/999999?text=Sin+Imagen'; }}
-                        style={{
-                          maxWidth: '100%',
-                          maxHeight: '100%',
-                          objectFit: 'contain',
-                          transition: 'transform 0.5s ease'
-                        }}
-                        className="prod-zoom-img"
-                      />
+                      <ImageSlider images={prod.imageUrls || [prod.imageUrl]} fallbackText="Sin Imagen" />
                       {/* Floating Hover Actions */}
                       <div className="prod-overlay-actions" style={{
                         position: 'absolute',

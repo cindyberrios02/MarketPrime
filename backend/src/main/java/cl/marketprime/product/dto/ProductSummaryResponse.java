@@ -20,6 +20,7 @@ public record ProductSummaryResponse(
         String storeName,
         String storeSlug,
         String primaryImageUrl,  // solo la imagen principal
+        java.util.List<String> imageUrls, // TODAS las imagenes para el slider
         // Frontend compatibility aliases:
         BigDecimal price,
         String imageUrl,
