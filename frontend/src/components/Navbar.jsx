@@ -242,6 +242,32 @@ const Navbar = () => {
           </form>
           <Link to="/search" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>Explorar Catálogo</Link>
           <Link to="/vender" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>¿Cómo Vender?</Link>
+          
+          {isAuthenticated && (
+            <div style={{ marginTop: '12px', borderTop: '1px solid var(--border-light)', paddingTop: '12px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Sesión activa como {user.email}</div>
+              <Link to="/profile" className="mobile-nav-link" style={{ border: 'none', padding: 0 }} onClick={() => setMobileMenuOpen(false)}>
+                <User size={16} style={{ display: 'inline', marginRight: '8px' }} /> Mi Perfil
+              </Link>
+              {isSeller && (
+                <Link to="/seller/dashboard" className="mobile-nav-link" style={{ border: 'none', padding: 0 }} onClick={() => setMobileMenuOpen(false)}>
+                  <Store size={16} style={{ display: 'inline', marginRight: '8px' }} /> Panel de Vendedor
+                </Link>
+              )}
+              {isAdmin && (
+                <Link to="/admin/dashboard" className="mobile-nav-link" style={{ border: 'none', padding: 0 }} onClick={() => setMobileMenuOpen(false)}>
+                  <Store size={16} style={{ display: 'inline', marginRight: '8px' }} /> Panel de Administrador
+                </Link>
+              )}
+              <button 
+                onClick={handleLogout}
+                className="mobile-nav-link" 
+                style={{ border: 'none', padding: 0, textAlign: 'left', color: 'var(--color-error)', cursor: 'pointer', background: 'none' }}
+              >
+                <LogOut size={16} style={{ display: 'inline', marginRight: '8px' }} /> Cerrar Sesión
+              </button>
+            </div>
+          )}
         </div>
       )}
     </nav>

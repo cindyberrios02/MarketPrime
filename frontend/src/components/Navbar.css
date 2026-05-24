@@ -256,6 +256,9 @@
   .search-form {
     display: none; /* Hide Desktop Search */
   }
+  .profile-menu {
+    display: none; /* Hide Desktop Profile Menu to save space */
+  }
   .mobile-menu-btn {
     display: flex;
   }
