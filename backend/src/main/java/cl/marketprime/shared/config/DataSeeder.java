@@ -31,7 +31,7 @@ import java.util.Set;
 import java.util.List;
 import java.util.ArrayList;
 
-@Component
+//@Component // Deshabilitado para producción para evitar bucles de reinicio o demoras en el arranque
 @RequiredArgsConstructor
 @Slf4j
 public class DataSeeder implements ApplicationRunner {
