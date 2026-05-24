@@ -1,7 +1,7 @@
 // components/Navbar.jsx
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Search, ShoppingCart, User, LogOut, Heart, Store, ChevronDown, Bell } from 'lucide-react';
+import { Search, ShoppingCart, User, LogOut, Heart, Store, ChevronDown, Bell, Menu, X } from 'lucide-react';
 import useAuthStore from '../store/useAuthStore';
 import useCartStore from '../store/useCartStore';
 import api from '../services/api';
@@ -12,6 +12,7 @@ const Navbar = () => {
   const { cart, fetchCart } = useCartStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [wishlistCount, setWishlistCount] = useState(0);
   const [unreadCount, setUnreadCount] = useState(0);
 
@@ -92,6 +93,7 @@ const Navbar = () => {
   const handleLogout = () => {
     logout();
     setDropdownOpen(false);
+    setMobileMenuOpen(false);
     navigate('/');
   };
 
@@ -219,8 +221,29 @@ const Navbar = () => {
               Iniciar Sesión
             </Link>
           )}
+          {/* Menú Hamburguesa Móvil */}
+          <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
       </div>
+
+      {/* Menú Desplegable Móvil */}
+      {mobileMenuOpen && (
+        <div className="mobile-nav-menu">
+          <form onSubmit={(e) => { setMobileMenuOpen(false); handleSearchSubmit(e); }} className="mobile-search">
+            <input
+              type="text"
+              placeholder="Buscar productos..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button type="submit"><Search size={18} /></button>
+          </form>
+          <Link to="/search" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>Explorar Catálogo</Link>
+          <Link to="/vender" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>¿Cómo Vender?</Link>
+        </div>
+      )}
     </nav>
   );
 };

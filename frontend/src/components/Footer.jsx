@@ -12,10 +12,7 @@ const Footer = () => {
       borderTop: '1px solid var(--border-light)'
     }}>
       <div className="container">
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: '32px',
+        <div className="grid-4" style={{
           marginBottom: '32px',
           textAlign: 'left'
         }}>

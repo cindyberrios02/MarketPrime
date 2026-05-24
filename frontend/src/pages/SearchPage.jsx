@@ -197,7 +197,7 @@ const SearchPage = () => {
       </div>
 
       {/* Main Layout */}
-      <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: '32px' }}>
+      <div className="search-layout">
         
         {/* SIDEBAR FILTERS */}
         <aside style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
@@ -475,6 +475,16 @@ const SearchPage = () => {
       )}
 
       <style>{`
+        .search-layout {
+          display: grid;
+          grid-template-columns: 260px 1fr;
+          gap: 32px;
+        }
+        @media (max-width: 868px) {
+          .search-layout {
+            grid-template-columns: 1fr;
+          }
+        }
         .product-image-container:hover .product-image-overlay {
           opacity: 1 !important;
         }

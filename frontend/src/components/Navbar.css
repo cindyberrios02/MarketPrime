@@ -193,3 +193,73 @@
   background-color: var(--color-error-bg);
   color: var(--color-error);
 }
+/* Menú Móvil Hamburger */
+.mobile-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.mobile-nav-menu {
+  display: none;
+  position: absolute;
+  top: 72px;
+  left: 0;
+  width: 100%;
+  background-color: var(--bg-primary);
+  border-bottom: 1px solid var(--border-light);
+  box-shadow: var(--shadow-md);
+  padding: 16px;
+  flex-direction: column;
+  gap: 16px;
+  animation: fadeIn 0.2s ease;
+  z-index: 140;
+}
+
+.mobile-search {
+  display: flex;
+  align-items: center;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-medium);
+  padding: 8px 16px;
+}
+
+.mobile-search input {
+  flex: 1;
+  border: none;
+  background: none;
+  font-size: 14px;
+}
+
+.mobile-search button {
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+}
+
+.mobile-nav-link {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+@media (max-width: 868px) {
+  .nav-link {
+    display: none; /* Hide Desktop links */
+  }
+  .search-form {
+    display: none; /* Hide Desktop Search */
+  }
+  .mobile-menu-btn {
+    display: flex;
+  }
+  .mobile-nav-menu {
+    display: flex;
+  }
+}
