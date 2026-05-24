@@ -64,6 +64,14 @@ public class DataSeeder implements ApplicationRunner {
                 log.info("Migrated existing product '{}' from DRAFT to ACTIVE", p.getName());
             }
         });
+
+        // Cleanup any products with no images (user requested not to leave products without images)
+        productRepository.findAll().forEach(p -> {
+            if (p.getImages() == null || p.getImages().isEmpty()) {
+                productRepository.delete(p);
+                log.info("Deleted product '{}' because it had no images.", p.getName());
+            }
+        });
     }
 
     private void seedCategories() {
@@ -156,7 +164,6 @@ public class DataSeeder implements ApplicationRunner {
 
             StoreProfile store = storeRepository.findBySlug(slug).orElse(null);
             if (store == null) {
-                boolean isPending = slug.equals("ferreteria-electrica");
                 store = StoreProfile.builder()
                         .user(user)
                         .storeName(name)
@@ -164,12 +171,20 @@ public class DataSeeder implements ApplicationRunner {
                         .description(desc)
                         .logoUrl(logo)
                         .bannerUrl(banner)
-                        .status(isPending ? StoreStatus.PENDING : StoreStatus.ACTIVE)
+                        .status(StoreStatus.ACTIVE)
                         .commissionRate(new BigDecimal("10.00"))
-                        .approvedAt(isPending ? null : Instant.now())
+                        .approvedAt(Instant.now())
                         .build();
                 store = storeRepository.save(store);
                 log.info("Seeded store: {}", name);
+            } else {
+                // Ensure all seeded stores are ACTIVE (fixes the missing Herramientas issue)
+                if (store.getStatus() != StoreStatus.ACTIVE) {
+                    store.setStatus(StoreStatus.ACTIVE);
+                    store.setApprovedAt(Instant.now());
+                    store = storeRepository.save(store);
+                    log.info("Activated store: {}", name);
+                }
             }
             stores.add(store);
         }
@@ -327,7 +342,7 @@ public class DataSeeder implements ApplicationRunner {
     }
 
     private void seedReviews(List<Product> products, List<User> buyers) {
-        if (reviewRepository.count() > 0) return;
+        if (reviewRepository.count() > 300) return; // Allow seeding more if under 300
 
         String[] comments = {
             "Superó mis expectativas, muy resistente.",
@@ -341,14 +356,17 @@ public class DataSeeder implements ApplicationRunner {
         };
 
         int reviewCount = 0;
-        // Seed 2-3 reviews per product for the first 15 products
-        for (int i = 0; i < Math.min(products.size(), 15); i++) {
+        // Seed 2-5 reviews per product for ALMOST ALL products to generate high reputation
+        for (int i = 0; i < products.size(); i++) {
             Product p = products.get(i);
-            int numReviews = 2 + (i % 2); // 2 or 3
+            // Skip products that already have reviews to avoid duplicates on reboot
+            if (!reviewRepository.findByProductId(p.getId()).isEmpty()) continue;
+
+            int numReviews = 2 + (int)(Math.random() * 4); // 2 to 5 reviews
             for (int r = 0; r < numReviews; r++) {
                 User buyer = buyers.get((i + r) % buyers.size());
-                int rating = 4 + ((i + r) % 2); // 4 or 5 stars
-                String comment = comments[(i * 3 + r) % comments.length];
+                int rating = 4 + (int)(Math.random() * 2); // 4 or 5 stars to ensure good reputation
+                String comment = comments[(int)(Math.random() * comments.length)];
 
                 cl.marketprime.review.Review review = cl.marketprime.review.Review.builder()
                         .product(p)
@@ -360,6 +378,6 @@ public class DataSeeder implements ApplicationRunner {
                 reviewCount++;
             }
         }
-        log.info("Seeded {} product reviews.", reviewCount);
+        log.info("Seeded {} new product reviews for store simulation.", reviewCount);
     }
 }
