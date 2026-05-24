@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const ImageSlider = ({ images, fallbackText = "Sin Imagen", height = "100%" }) => {
@@ -8,6 +8,16 @@ const ImageSlider = ({ images, fallbackText = "Sin Imagen", height = "100%" }) =
   const safeImages = Array.isArray(images) && images.length > 0 
     ? images 
     : ['https://placehold.co/600x600/eeeeee/999999?text=' + fallbackText.replace(' ', '+')];
+
+  useEffect(() => {
+    if (safeImages.length <= 1 || isHovered) return;
+    
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev === safeImages.length - 1 ? 0 : prev + 1));
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [safeImages.length, isHovered]);
 
   const handlePrev = (e) => {
     e.preventDefault();
