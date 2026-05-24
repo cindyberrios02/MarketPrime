@@ -274,6 +274,35 @@ const HomePage = () => {
             transform: translateY(0px) rotate(0deg);
           }
         }
+        .category-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          gap: 20px;
+        }
+        @media (max-width: 768px) {
+          .category-grid {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+          }
+          .category-card {
+            padding: 12px 4px !important;
+          }
+          .category-card span.cat-icon {
+            font-size: 24px !important;
+            margin-bottom: 6px !important;
+          }
+          .category-card h3.cat-title {
+            font-size: 10px !important;
+            margin-bottom: 0 !important;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+          }
+          .category-card span.cat-count {
+            display: none !important;
+          }
+        }
         .hero-slide-enter {
           animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
@@ -1187,18 +1216,12 @@ const HomePage = () => {
           </Link>
         </div>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-            gap: "20px",
-          }}
-        >
+        <div className="category-grid">
           {categories.map((cat) => (
             <Link
               key={cat.id}
               to={`/search?category=${cat.slug}`}
-              className="card"
+              className="card category-card"
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -1210,10 +1233,11 @@ const HomePage = () => {
                 transition: "all var(--transition-normal)",
               }}
             >
-              <span style={{ fontSize: "40px", marginBottom: "12px" }}>
+              <span className="cat-icon" style={{ fontSize: "40px", marginBottom: "12px" }}>
                 {cat.icon}
               </span>
               <h3
+                className="cat-title"
                 style={{
                   fontSize: "16px",
                   fontWeight: "700",
@@ -1223,7 +1247,7 @@ const HomePage = () => {
               >
                 {cat.name}
               </h3>
-              <span style={{ fontSize: "12px", color: "var(--text-tertiary)" }}>
+              <span className="cat-count" style={{ fontSize: "12px", color: "var(--text-tertiary)" }}>
                 {cat.count}
               </span>
             </Link>
