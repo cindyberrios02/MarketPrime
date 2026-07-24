@@ -67,7 +67,13 @@ jobs:
             # Asegurar permisos correctos para Nginx
             sudo chown -R www-data:www-data /var/www/marketprime/html
             
-            # 2. Reiniciar el Backend usando systemd
-            sudo systemctl restart marketprime.service
+            # 2. Detener el proceso Java antiguo que esté ocupando el puerto 8081
+            echo "Deteniendo proceso antiguo..."
+            sudo fuser -k 8081/tcp || echo "No hay proceso en el puerto 8081."
             
-            echo "Despliegue finalizado con systemd."
+            # 3. Iniciar el nuevo proceso en segundo plano (nohup)
+            echo "Iniciando nuevo proceso..."
+            export SPRING_PROFILES_ACTIVE=prod
+            nohup java -jar ~/marketprime-deploy/backend/build/libs/*SNAPSHOT.jar > ~/marketprime-deploy/backend/backend.log 2>&1 &
+            
+            echo "Despliegue finalizado. El backend está corriendo en el puerto 8081."
