@@ -53,10 +53,17 @@ jobs:
       # --- 4. REINICIAR SERVICIOS EN EL SERVIDOR (SSH) ---
       - name: Restart Services on Lightsail via SSH
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          DB_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
+          DB_USER: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
+          DB_PASS: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+          AWS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         with:
           host: ${{ secrets.LIGHTSAIL_HOST }}
           username: ${{ secrets.LIGHTSAIL_USERNAME }}
           key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+          envs: DB_URL,DB_USER,DB_PASS,AWS_KEY,AWS_SECRET
           script: |
             echo "Archivos subidos exitosamente a ~/marketprime-deploy/"
             
@@ -71,9 +78,15 @@ jobs:
             echo "Deteniendo proceso antiguo..."
             sudo fuser -k 8081/tcp || echo "No hay proceso en el puerto 8081."
             
-            # 3. Iniciar el nuevo proceso en segundo plano (nohup)
+            # 3. Iniciar el nuevo proceso inyectando las variables de entorno de forma segura
             echo "Iniciando nuevo proceso..."
             export SPRING_PROFILES_ACTIVE=prod
-            nohup java -jar ~/marketprime-deploy/backend/build/libs/*SNAPSHOT.jar > ~/marketprime-deploy/backend/backend.log 2>&1 &
+            nohup java -jar ~/marketprime-deploy/backend/build/libs/*SNAPSHOT.jar \
+              --spring.datasource.url="$DB_URL" \
+              --spring.datasource.username="$DB_USER" \
+              --spring.datasource.password="$DB_PASS" \
+              --aws.access-key-id="$AWS_KEY" \
+              --aws.secret-access-key="$AWS_SECRET" \
+              > ~/marketprime-deploy/backend/backend.log 2>&1 &
             
             echo "Despliegue finalizado. El backend está corriendo en el puerto 8081."
