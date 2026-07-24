@@ -158,7 +158,11 @@ const HomePage = () => {
           let icon = "📦";
           let count = "50+ Prod.";
           const slug = cat.slug?.toLowerCase();
-          if (slug.includes("deportes") || slug.includes("futbol") || slug.includes("running")) {
+          if (
+            slug.includes("deportes") ||
+            slug.includes("futbol") ||
+            slug.includes("running")
+          ) {
             icon = "⚽";
             count = "90+ Prod.";
           } else if (slug.includes("ropa")) {
@@ -603,7 +607,7 @@ const HomePage = () => {
               style={{
                 display: "flex",
                 alignItems: "center",
-                backgroundColor: "rgba(17, 17, 17, 0.85)",
+                backgroundColor: "white",
                 borderRadius: "var(--radius-full)",
                 padding: "5px 8px",
                 boxShadow: "0 12px 36px rgba(0,0,0,0.5)",
@@ -625,7 +629,8 @@ const HomePage = () => {
                   padding: "10px 16px",
                   fontSize: "14px",
                   backgroundColor: "transparent",
-                  color: "white",
+                  color: "black",
+                  borderRadius: "var(--radius-full)",
                 }}
               />
               <button
@@ -1233,7 +1238,10 @@ const HomePage = () => {
                 transition: "all var(--transition-normal)",
               }}
             >
-              <span className="cat-icon" style={{ fontSize: "40px", marginBottom: "12px" }}>
+              <span
+                className="cat-icon"
+                style={{ fontSize: "40px", marginBottom: "12px" }}
+              >
                 {cat.icon}
               </span>
               <h3
@@ -1247,7 +1255,10 @@ const HomePage = () => {
               >
                 {cat.name}
               </h3>
-              <span className="cat-count" style={{ fontSize: "12px", color: "var(--text-tertiary)" }}>
+              <span
+                className="cat-count"
+                style={{ fontSize: "12px", color: "var(--text-tertiary)" }}
+              >
                 {cat.count}
               </span>
             </Link>
@@ -1321,7 +1332,10 @@ const HomePage = () => {
                     position: "relative",
                   }}
                 >
-                  <ImageSlider images={prod.imageUrls || [prod.imageUrl]} fallbackText="Sin Imagen" />
+                  <ImageSlider
+                    images={prod.imageUrls || [prod.imageUrl]}
+                    fallbackText="Sin Imagen"
+                  />
                   {/* Floating Premium Hover Overlay */}
                   <div
                     className="product-image-overlay"
