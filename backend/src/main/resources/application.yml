@@ -8,9 +8,9 @@ spring:
         default-page-size: 20
         max-page-size: 100
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://ls-ade04f84f1e939929f9afd73875acfb043f4729d.clkwsrf1tddq.us-east-1.rds.amazonaws.com:3306/marketprimebd?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC}
-    username: ${SPRING_DATASOURCE_USERNAME:dbmasteruser}
-    password: "${SPRING_DATASOURCE_PASSWORD: I2(5+e(-(wx;68]X=xrG5rG~!!j<VL]0}"
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/marketprimebd}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: "${SPRING_DATASOURCE_PASSWORD:root}"
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -29,7 +29,7 @@ server:
 
 app:
   jwt:
-    secret: ${JWT_SECRET:"marketprime-super-secret-jwt-key-change-in-prod-2024"}
+    secret: ${JWT_SECRET:example-super-secret-for-marketprime-application}
     access-token-expiration-ms: 3600000
     refresh-token-expiration-ms: 604800000
 
@@ -38,4 +38,4 @@ aws:
   access-key-id: ${AWS_ACCESS_KEY_ID:dummy}
   secret-access-key: ${AWS_SECRET_ACCESS_KEY:dummy}
   s3:
-    bucket-name: ${AWS_S3_BUCKET_NAME:marketprime-images-bucket}
+    bucket-name: ${AWS_S3_BUCKET_NAME:dummy}
