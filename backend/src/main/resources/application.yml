@@ -8,7 +8,7 @@ spring:
         default-page-size: 20
         max-page-size: 100
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/marketprimebd}
+    url: ${SPRING_DATASOURCE_URL:marketprimebd}
     username: ${SPRING_DATASOURCE_USERNAME:root}
     password: "${SPRING_DATASOURCE_PASSWORD:root}"
     driver-class-name: com.mysql.cj.jdbc.Driver

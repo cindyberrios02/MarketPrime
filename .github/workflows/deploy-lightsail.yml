@@ -81,12 +81,12 @@ jobs:
             # 3. Iniciar el nuevo proceso inyectando las variables de entorno de forma segura
             echo "Iniciando nuevo proceso..."
             export SPRING_PROFILES_ACTIVE=prod
-            nohup java -jar ~/marketprime-deploy/backend/build/libs/*SNAPSHOT.jar \
-              --spring.datasource.url="$DB_URL" \
-              --spring.datasource.username="$DB_USER" \
-              --spring.datasource.password="$DB_PASS" \
-              --aws.access-key-id="$AWS_KEY" \
-              --aws.secret-access-key="$AWS_SECRET" \
-              > ~/marketprime-deploy/backend/backend.log 2>&1 &
+            export SPRING_DATASOURCE_URL="$DB_URL"
+            export SPRING_DATASOURCE_USERNAME="$DB_USER"
+            export SPRING_DATASOURCE_PASSWORD="$DB_PASS"
+            export AWS_ACCESS_KEY_ID="$AWS_KEY"
+            export AWS_SECRET_ACCESS_KEY="$AWS_SECRET"
+            
+            nohup java -jar ~/marketprime-deploy/backend/build/libs/*SNAPSHOT.jar > ~/marketprime-deploy/backend/backend.log 2>&1 &
             
             echo "Despliegue finalizado. El backend está corriendo en el puerto 8081."
