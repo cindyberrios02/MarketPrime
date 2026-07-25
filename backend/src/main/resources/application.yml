@@ -42,3 +42,8 @@ aws:
   secret-access-key: ${AWS_SECRET_ACCESS_KEY:dummy}
   s3:
     bucket-name: ${AWS_S3_BUCKET_NAME:dummy}
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.springframework.security: TRACE
