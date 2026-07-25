@@ -20,6 +20,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        temp:
+          use_jdbc_metadata_defaults: false
   servlet:
     multipart:
       max-file-size: 10MB
