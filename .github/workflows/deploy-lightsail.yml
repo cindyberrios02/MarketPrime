@@ -88,6 +88,7 @@ jobs:
             export AWS_SECRET_ACCESS_KEY="$AWS_SECRET"
             
             echo "DEBUG: SPRING_DATASOURCE_URL es: $SPRING_DATASOURCE_URL"
+            echo "DEBUG: Largo de SPRING_DATASOURCE_URL: ${#SPRING_DATASOURCE_URL} caracteres"
             echo "DEBUG: Largo del PASSWORD inyectado: ${#SPRING_DATASOURCE_PASSWORD} caracteres"
             
             nohup java -jar ~/marketprime-deploy/backend/build/libs/*SNAPSHOT.jar > ~/marketprime-deploy/backend/backend.log 2>&1 &
