@@ -89,7 +89,11 @@ jobs:
             
             echo "DEBUG: SPRING_DATASOURCE_URL es: $SPRING_DATASOURCE_URL"
             echo "DEBUG: Largo de SPRING_DATASOURCE_URL: ${#SPRING_DATASOURCE_URL} caracteres"
+            echo "DEBUG: SPRING_DATASOURCE_USERNAME es: $SPRING_DATASOURCE_USERNAME"
             echo "DEBUG: Largo del PASSWORD inyectado: ${#SPRING_DATASOURCE_PASSWORD} caracteres"
+            
+            echo "DEBUG: Probando conexión de red desde Lightsail a RDS..."
+            nc -zv ls-ade04f84f1e939929f9afd73875acfb043f4729d.clkwsrf1tddq.us-east-1.rds.amazonaws.com 3306 || echo "FALLÓ CONEXIÓN DE RED A RDS"
             
             nohup java -jar ~/marketprime-deploy/backend/build/libs/*SNAPSHOT.jar > ~/marketprime-deploy/backend/backend.log 2>&1 &
             
