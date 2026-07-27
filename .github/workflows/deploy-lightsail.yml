@@ -59,11 +59,14 @@ jobs:
           DB_PASS: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
           AWS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_BUCKET: ${{ secrets.AWS_S3_BUCKET_NAME }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
         with:
           host: ${{ secrets.LIGHTSAIL_HOST }}
           username: ${{ secrets.LIGHTSAIL_USERNAME }}
           key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
-          envs: DB_URL,DB_USER,DB_PASS,AWS_KEY,AWS_SECRET
+          envs: DB_URL,DB_USER,DB_PASS,AWS_KEY,AWS_SECRET,AWS_REGION,AWS_BUCKET,JWT_SECRET
           script: |
             echo "Archivos subidos exitosamente a ~/marketprime-deploy/"
             
@@ -86,6 +89,9 @@ jobs:
             export SPRING_DATASOURCE_PASSWORD="$DB_PASS"
             export AWS_ACCESS_KEY_ID="$AWS_KEY"
             export AWS_SECRET_ACCESS_KEY="$AWS_SECRET"
+            export AWS_REGION="$AWS_REGION"
+            export AWS_S3_BUCKET_NAME="$AWS_BUCKET"
+            export JWT_SECRET="$JWT_SECRET"
             
             echo "DEBUG: SPRING_DATASOURCE_URL es: $SPRING_DATASOURCE_URL"
             echo "DEBUG: Largo de SPRING_DATASOURCE_URL: ${#SPRING_DATASOURCE_URL} caracteres"
